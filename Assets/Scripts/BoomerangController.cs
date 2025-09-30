@@ -3,8 +3,10 @@ using UnityEngine;
 public class BoomerangController : MonoBehaviour
 {
     [SerializeField] private BoomerangManager boomerang;
-    [SerializeField] private Camera playerCamera; // Add reference to camera
-    public BoomerangControls controls; // généré par l'Input System
+    [SerializeField] private GameObject player;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private GameObject prefab;
+    public BoomerangControls controls;
     float holdTime;
     Vector2 mousePosition;
 
@@ -14,8 +16,7 @@ public class BoomerangController : MonoBehaviour
 
         controls.Boomerang.Throw.started += ctx => holdTime = Time.time;
         controls.Boomerang.Throw.performed += ctx => LaunchBoomerang(Time.time - holdTime);
-        
-        // If no camera is assigned, use the main camera
+
         if (playerCamera == null)
             playerCamera = Camera.main;
     }
@@ -26,20 +27,22 @@ public class BoomerangController : MonoBehaviour
     void Update()
     {
         mousePosition = controls.Boomerang.Aim.ReadValue<Vector2>();
-        // utiliser mousePosition pour tourner la visée / caméra
     }
 
     void LaunchBoomerang(float charge)
     {
         if (charge == 0) return;
 
-        // Convert mouse screen position to world direction
-        Vector3 mouseWorldPos = playerCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, playerCamera.transform.position.y));
-        Vector3 aimDirection = (mouseWorldPos - boomerang.transform.position).normalized;
+        Ray cameraRay = playerCamera.ScreenPointToRay(mousePosition);
+        Plane playerHeightPlane = new Plane(Vector3.up, new Vector3(0, player.transform.position.y, 0));
         
-        // Convert to Vector2 for the boomerang throw method (removing Y component)
-        Vector2 aim = new Vector2(aimDirection.x, aimDirection.z);
-
-        boomerang.Throw(charge, aim.normalized);
+        if (playerHeightPlane.Raycast(cameraRay, out float distance))
+        {
+            Vector3 worldPosition = cameraRay.GetPoint(distance);
+            Vector3 direction3D = worldPosition - player.transform.position;
+            Vector2 direction2D = new Vector2(direction3D.x, direction3D.z).normalized;
+            
+            boomerang.Throw(charge, direction2D);
+        }
     }
 }

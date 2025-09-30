@@ -24,16 +24,16 @@ public class BoomerangManager : MonoBehaviour
         else                    hitBeforeReturn = 4;
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb == null) return;
-        float launchForce = Mathf.Clamp(charge * 15f, 10f, 30f);
+        float launchForce = Mathf.Clamp(charge * 15f, 13f, 30f);
         Debug.Log($"Boomerang lancé, charge = {charge} s with {hitBeforeReturn} hits before return and launch force = {launchForce}");
         Vector3 newAim = new Vector3(aim.x, 0, aim.y);
-        rb.AddForce((newAim + Vector3.forward) * launchForce, ForceMode.VelocityChange);
+        rb.AddForce(newAim * launchForce, ForceMode.VelocityChange);
         isThrown = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && hitBeforeReturn == 0)
+        if (other.CompareTag("Player"))
         {
             Rigidbody rb = GetComponent<Rigidbody>();
             if (rb == null) return;
@@ -54,9 +54,14 @@ public class BoomerangManager : MonoBehaviour
             transform.rotation = initialRotation;
             hitBeforeReturn = 0;
         }
+        else if (other.CompareTag("Breakable"))
+        {
+            Debug.Log("Boomerang a touché un objet cassable");
+
+            Destroy(other.gameObject);
+        }
         else
         {
-            if (hitBeforeReturn == 0) return;
             hitBeforeReturn--;
             if (hitBeforeReturn > 0) return;
             Rigidbody rb = GetComponent<Rigidbody>();

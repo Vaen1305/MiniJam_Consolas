@@ -43,7 +43,7 @@ public class BoomerangManager : MonoBehaviour
             hitBeforeReturn = 0;
             isThrown = false;
         }
-        else if (other.CompareTag("Sticky"))
+        /*else if (other.CompareTag("Sticky"))
         {
             Debug.Log("Boomerang a touché un objet collant");
 
@@ -53,7 +53,7 @@ public class BoomerangManager : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             transform.rotation = initialRotation;
             hitBeforeReturn = 0;
-        }
+        }*/
         else if (other.CompareTag("Breakable"))
         {
             Debug.Log("Boomerang a touché un objet cassable");

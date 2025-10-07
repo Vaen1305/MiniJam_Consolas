@@ -14,10 +14,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] bool canJump = false;
     [SerializeField] float lineSize = 0.5f;
     [SerializeField] Animator playerAnimator;
+    
+    [Header("Rotation Settings")]
+    [SerializeField] float rotationSpeed = 10f;
+    
     void Start()
     {
         canJump = true;
     }
+    
     public void OnMovement(InputAction.CallbackContext move)
     {
         direction = move.ReadValue<Vector2>();
@@ -27,12 +32,27 @@ public class PlayerMovement : MonoBehaviour
             playerAnimator.SetBool("isWalking", false);
         }
     }
+    
     private void FixedUpdate()
     {
         Vector3 move = new Vector3(direction.x, 0f, direction.y) * _speed;
         myRBD.linearVelocity = new Vector3(move.x, myRBD.linearVelocity.y, move.z);
+        
+        if (direction.magnitude > 0.1f)
+        {
+            RotatePlayer(move);
+        }
+        
         CheckGround();
     }
+    
+    void RotatePlayer(Vector3 moveDirection)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+    }
+    
     public void OnJump(InputAction.CallbackContext jump)
     {
         if (jump.performed)
@@ -55,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
         }
         Debug.Log("a: " + canJump + "b: " + currentJump);
     }
+    
     public void CheckGround()
     {
         RaycastHit hit;
@@ -62,14 +83,9 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, lineSize, layerName))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-
-            
-                // canJump = true;
-                
-         
         }
-
     }
+    
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Ground")
@@ -77,5 +93,4 @@ public class PlayerMovement : MonoBehaviour
             currentJump = 0;
         }
     }
-
 }

@@ -12,9 +12,9 @@ public class TrampolineSolid : MonoBehaviour
             
             if (playerRigidbody != null)
             {
-                Vector3 velocity = playerRigidbody.velocity;
+                Vector3 velocity = playerRigidbody.linearVelocity;
                 velocity.y = 0;
-                playerRigidbody.velocity = velocity;
+                playerRigidbody.linearVelocity = velocity;
                 
                 playerRigidbody.AddForce(Vector3.up * bounceForce, ForceMode.Impulse);
             }

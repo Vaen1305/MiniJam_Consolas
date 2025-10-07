@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Rigidbody myRBD;
     [SerializeField] LayerMask layerName;
     [SerializeField] float jumpForce = 3;
-    float jumpCount = 2;
+    float jumpCount = 1;
     float currentJump = 0;
     [SerializeField] bool canJump = false;
     [SerializeField] float lineSize = 0.5f;

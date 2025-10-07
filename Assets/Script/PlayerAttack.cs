@@ -9,13 +9,16 @@ public class PlayerAttack : MonoBehaviour
     private Rigidbody rb;
     private DownSlashHitbox hitboxComponent;
     private bool isDownSlashing = false;
+    private PlayerHealth playerHealth;
 
     void Start() 
     { 
         rb = GetComponent<Rigidbody>();
         hitboxComponent = downSlashHitbox.GetComponent<DownSlashHitbox>();
+        playerHealth = GetComponent<PlayerHealth>();
         downSlashHitbox.SetActive(false);
     }
+    
     public void OnDownSlash(InputAction.CallbackContext context)
     {
         if (context.performed && !isDownSlashing)
@@ -23,12 +26,6 @@ public class PlayerAttack : MonoBehaviour
             StartCoroutine(DoDownSlash());
         }
     }
-
-    /*void Update()
-    {
-        if (Input.GetMouseButtonDown(1) && !isDownSlashing)
-            StartCoroutine(DoDownSlash());
-    }*/
 
     IEnumerator DoDownSlash()
     {
@@ -46,6 +43,10 @@ public class PlayerAttack : MonoBehaviour
             hitboxComponent.DeactivateHitbox();
             
         downSlashHitbox.SetActive(false);
+        
+        // Mantener el flag activo un poco más
+        yield return new WaitForSeconds(0.2f);
+        
         isDownSlashing = false;
     }
 
@@ -53,5 +54,18 @@ public class PlayerAttack : MonoBehaviour
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * pogoBounceForce, ForceMode.VelocityChange);
+        
+        if (playerHealth != null)
+        {
+            playerHealth.OnPogoPerformed();
+        }
+        
+        Debug.Log("Pogo bounce ejecutado");
+    }
+    
+    // MÉTODO FALTANTE - Agregar esto
+    public bool IsDownSlashing()
+    {
+        return isDownSlashing;
     }
 }

@@ -44,23 +44,18 @@ public class RotateTramp : MonoBehaviour
         
         if (timer <= 0f)
         {
-            // Cambiar dirección
             clockwise = !clockwise;
             
-            // Reiniciar timer
             timer = directionChangeTime;
             
-            // Debug para ver el cambio
             Debug.Log("Dirección cambiada a: " + (clockwise ? "Clockwise" : "Counter-clockwise"));
         }
     }
     
     void RotateTrap()
     {
-        // Determinar la dirección de rotación
         float direction = clockwise ? 1f : -1f;
         
-        // Rotar el objeto
         transform.Rotate(rotationAxis * rotationSpeed * direction * Time.deltaTime);
     }
 }

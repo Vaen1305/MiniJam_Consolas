@@ -8,6 +8,11 @@ TagManager:
   - Pogoable
   - Boomerang
   - Breakable
+  - Ocean
+  - Translucent
+  - Sticky
+  - Node
+  - Win
   layers:
   - Default
   - TransparentFX

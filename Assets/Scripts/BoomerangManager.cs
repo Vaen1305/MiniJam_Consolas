@@ -3,6 +3,7 @@ using UnityEngine;
 public class BoomerangManager : MonoBehaviour
 {
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private Vector3 holsterOffset = new Vector3(0.5f, 0.5f, 0f); // Offset cuando está guardado
     private Quaternion initialRotation;
     private int hitBeforeReturn = 0;
     private bool isThrown = false;
@@ -11,6 +12,16 @@ public class BoomerangManager : MonoBehaviour
     {
         GetComponent<Collider>().isTrigger = true;
         initialRotation = transform.rotation;
+    }
+
+    void Update()
+    {
+        // Si no está lanzado, seguir al jugador sin ser hijo
+        if (!isThrown && playerTransform != null)
+        {
+            transform.position = playerTransform.position + holsterOffset;
+            transform.rotation = initialRotation;
+        }
     }
 
     public void Throw(float charge, Vector2 aim)
@@ -43,21 +54,9 @@ public class BoomerangManager : MonoBehaviour
             hitBeforeReturn = 0;
             isThrown = false;
         }
-        /*else if (other.CompareTag("Sticky"))
-        {
-            Debug.Log("Boomerang a touché un objet collant");
-
-            Rigidbody rb = GetComponent<Rigidbody>();
-            if (rb == null) return;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            transform.rotation = initialRotation;
-            hitBeforeReturn = 0;
-        }*/
         else if (other.CompareTag("Breakable"))
         {
             Debug.Log("Boomerang a touché un objet cassable");
-
             Destroy(other.gameObject);
         }
         else
